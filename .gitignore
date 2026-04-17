@@ -14,6 +14,7 @@ site/
 # Publish snapshot site (calculator-style)
 !docs/
 !docs/index.html
+!docs/campaign-cost-calculator.html
 
 # Logs
 *.log

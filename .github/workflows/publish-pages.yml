@@ -41,6 +41,7 @@ jobs:
             exit 1
           fi
           mkdir -p site
+          cp docs/campaign-cost-calculator.html site/campaign-cost-calculator.html
           python build_bad_orders_dashboard.py \
             --country-code mt \
             --year 2026 \
