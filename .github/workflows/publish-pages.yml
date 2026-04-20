@@ -1,4 +1,4 @@
-name: Publish Bad Orders Dashboard
+name: Publish dashboards to GitHub Pages
 
 on:
   workflow_dispatch: {}
@@ -32,7 +32,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build LIVE dashboard
+      - name: Build LIVE dashboards
         env:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
@@ -42,6 +42,14 @@ jobs:
           fi
           mkdir -p site
           cp docs/campaign-cost-calculator.html site/campaign-cost-calculator.html
+          cp docs/pages-hub.html site/dashboards.html
+          if [ ! -f docs/smart-promo-roi.html ]; then
+            echo "Missing docs/smart-promo-roi.html (same pattern as the calculator: commit a built snapshot)."
+            echo "Build locally, then:"
+            echo "  python3 build_smart_promo_roi_dashboard.py --country-code mt --lookback-days 90 --output docs/smart-promo-roi.html"
+            exit 1
+          fi
+          cp docs/smart-promo-roi.html site/smart-promo-roi.html
           python build_bad_orders_dashboard.py \
             --country-code mt \
             --year 2026 \

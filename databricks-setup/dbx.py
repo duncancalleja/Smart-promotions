@@ -53,6 +53,14 @@ class DBX:
             self._conn.close()
             self._conn = None
 
+    def execute(self, query: str) -> None:
+        """Run SQL with no result set (DDL / CREATE VIEW / DROP)."""
+        if self._conn is None:
+            raise RuntimeError("DBX connection not open. Use `with DBX() as dbx:`.")
+
+        with self._conn.cursor() as cur:
+            cur.execute(query)
+
     def query(self, query: str) -> pd.DataFrame:
         if self._conn is None:
             raise RuntimeError("DBX connection not open. Use `with DBX() as dbx:`.")

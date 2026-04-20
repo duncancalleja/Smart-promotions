@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bolt food · dashboards</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      max-width: 36rem;
+      margin: 2rem auto;
+      padding: 0 1.25rem;
+      line-height: 1.55;
+    }
+    h1 { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; }
+    p { color: #555; margin-top: 0; }
+    @media (prefers-color-scheme: dark) {
+      p { color: #aaa; }
+    }
+    ul { padding-left: 1.2rem; margin-top: 1rem; }
+    li { margin: 0.45rem 0; }
+    a { color: #0a7; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    .note { font-size: 0.85rem; margin-top: 1.75rem; }
+  </style>
+</head>
+<body>
+  <h1>Bolt food · dashboards</h1>
+  <p>Static pages from the latest GitHub Pages deploy. Each link opens a self-contained HTML report.</p>
+  <ul>
+    <li><a href="index.html">Bad orders (Malta, configured year)</a></li>
+    <li><a href="campaign-cost-calculator.html">Campaign cost calculator</a></li>
+    <li><a href="smart-promo-roi.html">Smart Promotions ROI (Malta)</a> — same as calculator: static snapshot; update by rebuilding <code>docs/smart-promo-roi.html</code> in git.</li>
+  </ul>
+  <p class="note">Bookmark <strong>dashboards.html</strong> on this site if you want this menu as your entry point.</p>
+</body>
+</html>

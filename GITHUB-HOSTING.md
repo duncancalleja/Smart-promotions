@@ -3,7 +3,7 @@
 This repo includes a GitHub Actions workflow (`.github/workflows/publish-pages.yml`) that:
 
 - runs **every Monday** (and on-demand),
-- generates `site/index.html`,
+- builds `site/` (bad orders from Databricks; calculator + Smart Promotions ROI copied from `docs/`; hub),
 - deploys it to **GitHub Pages**.
 
 ## Safe-by-default behavior
@@ -31,7 +31,7 @@ If you **cannot** publish Pages privately, then a Pages site may be publicly rea
    - Repo **Settings** → **Pages**
    - Set **Build and deployment** to **GitHub Actions**
 4. Trigger the workflow:
-   - Repo → **Actions** → “Publish Bad Orders Dashboard” → **Run workflow**
+   - Repo → **Actions** → “Publish dashboards to GitHub Pages” → **Run workflow**
 
 After the first deploy, GitHub will show a **Visit site** link in Settings → Pages.
 
@@ -48,12 +48,25 @@ Only do this once the repo/Pages site is internal/private.
 
 ## What gets published
 
-Current workflow publishes a Malta dashboard:
+After deploy, these paths exist on the Pages site (replace `<base>` with your repo’s Pages root URL):
 
-- `--country-code mt`
-- `--year 2026` (YTD)
+| Path | Content |
+|------|---------|
+| `<base>/` | Bad orders dashboard (Malta, `--year 2026`) |
+| `<base>/smart-promo-roi.html` | Smart Promotions ROI — **static snapshot** committed as `docs/smart-promo-roi.html` (same idea as the calculator; refresh by rebuilding locally and committing) |
+| `<base>/campaign-cost-calculator.html` | Campaign cost calculator (static from `docs/`) |
+| `<base>/dashboards.html` | Short hub page linking to the three dashboards above |
 
-If you want multiple countries/years, we can convert the workflow to a matrix build and publish multiple pages.
+**Refreshing the ROI file on Pages:** from the repo root, with Databricks available locally:
+
+```bash
+python3 build_smart_promo_roi_dashboard.py --country-code mt --lookback-days 90 --output docs/smart-promo-roi.html
+git add docs/smart-promo-roi.html && git commit -m "Refresh Smart Promotions ROI snapshot" && git push
+```
+
+Then run the Pages workflow (or wait for the weekly schedule). The site URL for ROI stays the same; visitors get the new snapshot after deploy.
+
+If you want multiple countries, years, or ROI windows, use different filenames under `docs/` and extend the workflow `cp` lines.
 
 ## Troubleshooting
 
