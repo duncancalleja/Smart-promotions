@@ -103,8 +103,80 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
       position: sticky; top: 0; z-index: 50;
       background: linear-gradient(180deg, #f6f8f6 0%, #eef3ee 100%);
       border-bottom: 2px solid var(--bolt-green);
-      padding: .35rem 0 .65rem; margin: 0 0 .5rem 0;
+      padding: .55rem 0 .65rem; margin: 0 0 .5rem 0;
       box-shadow: 0 2px 8px rgba(0,0,0,.07); }}
+    .primary-filters {{
+      display: flex; align-items: center; gap: .55rem; flex-wrap: wrap;
+      padding: .35rem 0; }}
+    .primary-filters .pf-group {{ display: flex; align-items: center; gap: .35rem; }}
+    .primary-filters .pf-lbl {{
+      font-size: .7rem; font-weight: 800; letter-spacing: .05em;
+      color: var(--bolt-muted); text-transform: uppercase; }}
+    .primary-filters .pf-ctrl {{
+      padding: .5rem .7rem; border-radius: 8px; border: 1px solid var(--bolt-border);
+      background: #fff; font-size: .85rem; min-width: 170px; color: var(--bolt-text);
+      margin-left: 0; }}
+    .primary-filters .pf-ctrl.pf-wide {{ min-width: 240px; }}
+    .primary-filters .pf-sep {{
+      width: 1px; align-self: stretch; background: var(--bolt-border); margin: 0 .1rem; }}
+    .view-toggle {{ display: inline-flex; border: 1px solid var(--bolt-border);
+      border-radius: 8px; overflow: hidden; background: #fff; }}
+    .view-toggle .vt {{
+      padding: .5rem .95rem; border: none; background: transparent;
+      font-size: .82rem; font-weight: 700; color: var(--bolt-muted); cursor: pointer; }}
+    .view-toggle .vt.active {{ background: var(--bolt-green); color: #fff; }}
+    .hidden-filters {{ display: none !important; }}
+    .combo-wrap {{ position: relative; display: inline-flex; align-items: center; }}
+    .combo-input {{
+      padding: .5rem .9rem .5rem .7rem; border-radius: 8px; border: 1px solid var(--bolt-border);
+      background: #fff; font-size: .85rem; min-width: 260px; color: var(--bolt-text);
+      outline: none; }}
+    .combo-input:focus {{ border-color: var(--bolt-green); box-shadow: 0 0 0 2px #b7e3c7; }}
+    .combo-clear {{ position: absolute; right: .45rem; background: none; border: none;
+      color: var(--bolt-muted); cursor: pointer; font-size: 1rem; line-height: 1;
+      padding: 0; display: none; }}
+    .combo-clear:hover {{ color: var(--bolt-text); }}
+    .combo-list {{
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60;
+      max-height: 280px; overflow-y: auto;
+      background: #fff; border: 1px solid var(--bolt-border); border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.10); display: none; }}
+    .combo-list.open {{ display: block; }}
+    .combo-opt {{ padding: .45rem .75rem; font-size: .82rem; cursor: pointer; }}
+    .combo-opt:hover, .combo-opt.active {{ background: #eef7f1; color: var(--bolt-green-dark); }}
+    .combo-none {{ padding: .45rem .75rem; font-size: .82rem; color: var(--bolt-muted); }}
+    .combo-wrap {{ position: relative; display: inline-flex; align-items: center; }}
+    .combo-input {{
+      padding: .5rem 2rem .5rem .7rem; border-radius: 8px;
+      border: 1px solid var(--bolt-border); background: #fff;
+      font-size: .85rem; min-width: 240px; color: var(--bolt-text); }}
+    .combo-input:focus {{ outline: none; border-color: var(--bolt-green);
+      box-shadow: 0 0 0 3px rgba(42,156,100,.15); }}
+    .combo-clear {{
+      position: absolute; right: .35rem; background: none; border: none;
+      cursor: pointer; color: var(--bolt-muted); font-size: 1.05rem;
+      line-height: 1; padding: .15rem .3rem; display: none; border-radius: 4px; }}
+    .combo-clear:hover {{ color: var(--bolt-text); background: #f0f4f0; }}
+    .combo-list {{
+      position: absolute; top: calc(100% + 4px); left: 0;
+      min-width: 100%; max-height: 320px; overflow-y: auto;
+      background: #fff; border: 1px solid var(--bolt-border);
+      border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,.10);
+      z-index: 60; display: none; }}
+    .combo-list.open {{ display: block; }}
+    .combo-opt {{
+      padding: .45rem .75rem; font-size: .85rem; color: var(--bolt-text);
+      cursor: pointer; white-space: nowrap; }}
+    .combo-opt.active, .combo-opt:hover {{ background: #eef7f1; color: var(--bolt-green-dark); }}
+    .combo-opt.all-opt {{ font-weight: 700; color: var(--bolt-green-dark);
+      border-bottom: 1px solid var(--bolt-border); }}
+    .combo-none {{ padding: .45rem .75rem; font-size: .85rem; color: var(--bolt-muted); }}
+    .combo-meta {{ font-size: .72rem; color: var(--bolt-muted); margin-left: .4rem; }}
+    .btn-load {{
+      background: var(--bolt-green); color: #fff; border: none; border-radius: 8px;
+      padding: .55rem 1.1rem; font-weight: 700; font-size: .85rem; cursor: pointer;
+      margin-left: auto; }}
+    .btn-load:hover {{ background: var(--bolt-green-dark); }}
   </style>
 </head>
 <body>
@@ -116,38 +188,60 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
   <p class="build-banner">{esc(build_banner)}</p>
   <div class="filter-dock-wrap">
     <div class="wrap">
-    <div class="filters">
-      <div class="date-range-box" role="group" aria-labelledby="dateRangeHeading">
-        <span id="dateRangeHeading" class="date-range-heading">Order dates</span>
-        <label>From <input type="date" id="dateFromIn" aria-label="Order date from" /></label>
-        <label>To <input type="date" id="dateToIn" aria-label="Order date to" /></label>
-        <span class="date-presets">
-          <button type="button" class="preset-btn" data-preset="full" title="Use full build window">Full window</button>
-          <button type="button" class="preset-btn" data-preset="30" title="Last 30 days within window">Last 30 days</button>
-          <button type="button" class="preset-btn" data-preset="7" title="Last 7 days within window">Last 7 days</button>
-        </span>
+      <div class="primary-filters">
+        <div class="view-toggle" role="tablist" aria-label="Entity view">
+          <button type="button" class="vt active" id="vtProvider" role="tab" aria-selected="true">Provider</button>
+          <button type="button" class="vt" id="vtBrand" role="tab" aria-selected="false">Brand</button>
+        </div>
+        <div class="pf-group" id="pfProviderGroup">
+          <span class="pf-lbl">Provider</span>
+          <div class="combo-wrap" id="providerComboWrap">
+            <input type="text" class="combo-input" id="providerComboInput" placeholder="Type to search…" autocomplete="off" spellcheck="false" aria-label="Provider" />
+            <button type="button" class="combo-clear" id="providerComboClear" title="Clear" aria-label="Clear provider">×</button>
+            <div class="combo-list" id="providerComboList" role="listbox"></div>
+          </div>
+          <input type="hidden" id="provSel" value="all" />
+        </div>
+        <div class="pf-group" id="pfBrandGroup" style="display:none">
+          <span class="pf-lbl">Brand</span>
+          <div class="combo-wrap" id="brandComboWrap">
+            <input type="text" class="combo-input" id="brandComboInput" placeholder="Type to search brands…" autocomplete="off" spellcheck="false" aria-label="Brand" />
+            <button type="button" class="combo-clear" id="brandComboClear" title="Clear" aria-label="Clear brand">×</button>
+            <div class="combo-list" id="brandComboList" role="listbox"></div>
+          </div>
+          <input type="hidden" id="brandSel" value="all" />
+        </div>
+        <div class="pf-sep" aria-hidden="true"></div>
+        <div class="pf-group">
+          <span class="pf-lbl">From</span>
+          <input type="date" id="dateFromIn" class="pf-ctrl" aria-label="Order date from" />
+        </div>
+        <div class="pf-group">
+          <span class="pf-lbl">To</span>
+          <input type="date" id="dateToIn" class="pf-ctrl" aria-label="Order date to" />
+        </div>
+        <button type="button" class="btn-load" id="loadReportBtn">Load Report</button>
       </div>
-      <label>Provider <select id="provSel"><option value="all">All providers</option></select></label>
-      <label>Brand <select id="brandSel"><option value="all">All brands</option></select></label>
-      <label>Product audience <select id="audSel"><option value="all">All</option></select></label>
-      <label>Lifecycle <select id="lifeSel"><option value="all">All</option></select></label>
-      <label>LCS cohort <select id="lcsSel"><option value="all">All</option></select></label>
-      <label>Enroll. cohort <select id="enrCohortSel"><option value="all">All</option></select></label>
-      <label>Report reason <select id="reasonSel"><option value="all">All</option></select></label>
-      <label>AM <select id="amSel"><option value="all">All</option></select></label>
-      <label>Segment <select id="segSel"><option value="all">All</option></select></label>
-      <label>Spend objective <select id="objSel"><option value="all">All</option></select></label>
-      <label>Search
-        <span class="search-wrap">
-          <input type="search" id="searchIn" placeholder="Provider, brand, reason… (space = AND)" autocomplete="off" />
-          <button type="button" class="search-clear" id="searchClear" title="Clear search">×</button>
-        </span>
-      </label>
-    </div>
+      <!-- Hidden filters kept for JS compatibility; always default to "all". -->
+      <div class="hidden-filters" aria-hidden="true">
+        <select id="audSel"><option value="all">All</option></select>
+        <select id="lifeSel"><option value="all">All</option></select>
+        <select id="lcsSel"><option value="all">All</option></select>
+        <select id="enrCohortSel"><option value="all">All</option></select>
+        <select id="reasonSel"><option value="all">All</option></select>
+        <select id="amSel"><option value="all">All</option></select>
+        <select id="segSel"><option value="all">All</option></select>
+        <select id="objSel"><option value="all">All</option></select>
+        <input type="search" id="searchIn" value="" />
+        <button type="button" id="searchClear">×</button>
+        <button type="button" class="preset-btn" data-preset="full"></button>
+        <button type="button" class="preset-btn" data-preset="30"></button>
+        <button type="button" class="preset-btn" data-preset="7"></button>
+      </div>
     </div>
   </div>
   <div class="wrap">
-    <p class="hint" style="margin:-0.15rem 0 0.75rem"><strong>Order dates</strong> (green) and the other filters narrow this export. The <strong>Targeting cohorts</strong> tab always reflects the full date range of this file.</p>
+    <p class="hint" style="margin:-0.15rem 0 0.75rem">Pick a <strong>Provider</strong> or <strong>Brand</strong> and a date range, then click <strong>Load Report</strong>. The <strong>Targeting cohorts</strong> tab uses the <strong>same filters</strong> (dates, provider/brand, advanced filters) as Spend analysis.</p>
     <div class="tabs" id="mainTabs">
       <button type="button" class="tab active" data-tab="tab-spend">Spend by report reason</button>
       <button type="button" class="tab" data-tab="tab-cohort">Targeting cohorts</button>
@@ -187,7 +281,7 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
       </div>
       <div class="panel">
         <h2>Lifecycle bucket (Bolt vs provider)</h2>
-        <p class="hint">Derived from LCS cohort wording (e.g. churned, engaged). Server-wide for the date range.</p>
+        <p class="hint">Derived from LCS cohort wording (e.g. churned, engaged). With no filters, matches the server rollup for the file window; otherwise sums the filtered detail rows (top spenders capped).</p>
         <canvas id="chLifecycle"></canvas>
       </div>
       <div class="grid2">
@@ -211,7 +305,7 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
     <div id="tab-prov" class="tab-panel section-hidden">
       <div class="panel">
         <h2>Top provider × report reason (pre-aggregated)</h2>
-        <p class="hint">Use filters above; table is built from the capped server query.</p>
+          <p class="hint">Use filters above; with filters applied, cohorts are recomputed from the detail slice (LCS / enrollment lists still top-N by spend).</p>
         <table class="data" id="tblProv"><thead></thead><tbody></tbody></table>
       </div>
     </div>
@@ -321,20 +415,137 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
     }});
   }});
 
-  (function initProviderBrandSelects() {{
+  // Searchable combobox factory — hidden input holds the selected value ("all" = no filter).
+  // Options: array of objects with value/label/hay (hay = lowercased haystack we match against).
+  function makeCombo(opts) {{
+    const inp    = document.getElementById(opts.inputId);
+    const hidden = document.getElementById(opts.hiddenId);
+    const list   = document.getElementById(opts.listId);
+    const clr    = document.getElementById(opts.clearId);
+    const allLbl = opts.allLabel || "All";
+    const max    = opts.maxResults || 200;
+    let items    = [];
+    let activeIdx = -1;
+    const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+    function openList(filterText) {{
+      const q = String(filterText || "").trim().toLowerCase();
+      const terms = q ? q.split(/\s+/) : [];
+      const matched = items.filter(it => !terms.length || terms.every(t => it.hay.includes(t)));
+      const headRow =
+        '<div class="combo-opt" data-value="all" data-label="' + esc(allLbl) + '" data-idx="-1" style="font-weight:700">' +
+        esc(allLbl) + "</div>";
+      const more = matched.length > max ? '<div class="combo-none">Showing top ' + max + " of " + matched.length + " matches — keep typing to narrow…</div>" : "";
+      list.innerHTML = headRow +
+        (matched.length
+          ? matched.slice(0, max).map((it, i) =>
+              '<div class="combo-opt" data-value="' + esc(it.value) + '" data-label="' + esc(it.label) + '" data-idx="' + i + '">' + esc(it.label) + "</div>"
+            ).join("")
+          : '<div class="combo-none">No matches</div>') + more;
+      list.classList.add("open");
+      activeIdx = -1;
+    }}
+    function closeList() {{ list.classList.remove("open"); }}
+    function setVal(val, label) {{
+      hidden.value = val || "all";
+      inp.value    = (val && val !== "all") ? label : "";
+      clr.style.display = inp.value ? "block" : "none";
+      closeList();
+      activeIdx = -1;
+      if (typeof opts.onChange === "function") opts.onChange();
+    }}
+    function moveActive(dir) {{
+      const nodes = list.querySelectorAll(".combo-opt");
+      if (!nodes.length) return;
+      nodes.forEach(n => n.classList.remove("active"));
+      activeIdx = Math.max(0, Math.min(nodes.length - 1, activeIdx + dir));
+      nodes[activeIdx].classList.add("active");
+      nodes[activeIdx].scrollIntoView({{ block: "nearest" }});
+    }}
+    inp.addEventListener("input", () => {{
+      clr.style.display = inp.value ? "block" : "none";
+      hidden.value = "all";
+      openList(inp.value);
+    }});
+    inp.addEventListener("focus", () => openList(inp.value));
+    inp.addEventListener("keydown", e => {{
+      if (e.key === "ArrowDown")      {{ e.preventDefault(); moveActive(1); }}
+      else if (e.key === "ArrowUp")   {{ e.preventDefault(); moveActive(-1); }}
+      else if (e.key === "Enter")     {{
+        e.preventDefault();
+        const a = list.querySelector(".combo-opt.active") || list.querySelector(".combo-opt");
+        if (a) setVal(a.dataset.value, a.dataset.label);
+      }}
+      else if (e.key === "Escape")    {{ closeList(); inp.blur(); }}
+    }});
+    list.addEventListener("mousedown", e => {{
+      const opt = e.target.closest(".combo-opt");
+      if (opt) {{ e.preventDefault(); setVal(opt.dataset.value, opt.dataset.label); }}
+    }});
+    clr.addEventListener("click", () => {{
+      setVal("all", "");
+      inp.focus();
+      openList("");
+    }});
+    document.addEventListener("click", e => {{
+      if (!e.target.closest("#" + opts.wrapId)) closeList();
+    }});
+    return {{
+      setItems(newItems) {{ items = newItems; }},
+      setValue(val, label) {{ setVal(val, label); }},
+      value() {{ return hidden.value; }},
+    }};
+  }}
+
+  const escCombo = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+  const providerCombo = makeCombo({{
+    wrapId: "providerComboWrap", inputId: "providerComboInput",
+    hiddenId: "provSel", listId: "providerComboList", clearId: "providerComboClear",
+    allLabel: "All providers", onChange: () => refreshSpend(),
+  }});
+  const brandCombo = makeCombo({{
+    wrapId: "brandComboWrap", inputId: "brandComboInput",
+    hiddenId: "brandSel", listId: "brandComboList", clearId: "brandComboClear",
+    allLabel: "All brands", onChange: () => refreshSpend(),
+  }});
+
+  (function populateProviderCombo() {{
     const byPid = new Map();
     rowsProv.forEach(r => {{
       const id = String(r.provider_id != null ? r.provider_id : "");
-      if (id && !byPid.has(id)) byPid.set(id, String(r.provider_name || ""));
+      if (id && !byPid.has(id)) {{
+        byPid.set(id, {{
+          name:    String(r.provider_name || ""),
+          segment: String(r.segment || ""),
+          am:      String(r.am || ""),
+        }});
+      }}
     }});
-    const pairs = [...byPid.entries()].sort((a, b) => a[1].localeCompare(b[1]));
-    const escOpt = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-    const ps = document.getElementById("provSel");
-    ps.innerHTML = '<option value="all">All providers</option>' +
-      pairs.map(([id, name]) => '<option value="' + escOpt(id) + '">' + escOpt(name) + " (" + escOpt(id) + ")</option>").join("");
+    const items = [...byPid.entries()]
+      .map(([id, v]) => {{
+        const parts = [v.name];
+        if (v.segment) parts.push(v.segment);
+        const label = parts.join(" · ") + " · " + id;
+        const hay = (v.name + " " + v.segment + " " + v.am + " " + id).toLowerCase();
+        return {{ value: id, label, hay }};
+      }})
+      .sort((a, b) => a.label.localeCompare(b.label));
+    providerCombo.setItems(items);
   }})();
 
-  fillSelect("brandSel", uniq(rowsProv.map(r => cohortLabel(r.brand_name))), "All brands");
+  (function populateBrandCombo() {{
+    const brands = new Set();
+    rowsProv.forEach(r => {{
+      const b = String(r.brand_name || "").trim();
+      if (b) brands.add(b);
+    }});
+    const items = [...brands]
+      .sort((a, b) => a.localeCompare(b))
+      .map(b => ({{ value: b, label: b, hay: b.toLowerCase() }}));
+    brandCombo.setItems(items);
+  }})();
+
   fillSelect("audSel", uniq(rowsProv.map(r => String(r.audience_cohort || ""))), "All");
   fillSelect("lifeSel", uniq(rowsProv.map(r => String(r.lifecycle_bucket || ""))), "All");
   fillSelect("lcsSel", uniq(rowsProv.map(r => cohortLabel(r.lcs_cohort))), "All");
@@ -404,12 +615,34 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
     }})).sort((a,b) => b.total_spend_local - a.total_spend_local);
   }}
 
+  /** Group filtered detail rows by one dimension (same money semantics as report-reason rollup). */
+  function aggregateFromProvByField(filtered, field, keyFn) {{
+    const byKey = {{}};
+    filtered.forEach(r => {{
+      const raw = r[field];
+      const k = keyFn ? keyFn(raw) : (String(raw || "").trim() || "(not mapped)");
+      if (!byKey[k]) byKey[k] = {{ bolt: 0, prov: 0, orders: 0, providers: new Set() }};
+      byKey[k].bolt += Number(r.bolt_spend_local) || 0;
+      byKey[k].prov += Number(r.provider_spend_local) || 0;
+      byKey[k].orders += Number(r.orders) || 0;
+      byKey[k].providers.add(String(r.provider_id));
+    }});
+    return Object.entries(byKey).map(([k, v]) => ({{
+      [field]: k,
+      bolt_spend_local: v.bolt,
+      provider_spend_local: v.prov,
+      total_spend_local: v.bolt + v.prov,
+      orders: v.orders,
+      providers: v.providers.size
+    }})).sort((a, b) => (Number(b.total_spend_local) || 0) - (Number(a.total_spend_local) || 0));
+  }}
+
   function hlText(raw, terms) {{
     if (!terms || terms.length === 0) return escCell(raw);
     let s = escCell(raw);
     terms.forEach(t => {{
       if (!t) return;
-      const re = new RegExp("(" + t.replace(/[.*+?^${{}}()|[\]\\]/g, "\\$&") + ")", "gi");
+      const re = new RegExp("(" + t.replace(/[.*+?^${{}}()|[\\]\\\\]/g, "\\\\$&") + ")", "gi");
       s = s.replace(re, "<mark class='hl'>$1</mark>");
     }});
     return s;
@@ -432,6 +665,28 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
       || document.getElementById("segSel").value !== "all"
       || document.getElementById("objSel").value !== "all"
       || q.length > 0;
+  }}
+
+  const COHORT_TOP_ENROLL = 120;
+  const COHORT_TOP_LCS = 100;
+
+  /** Pre-aggregated server rollups only when no slice filters; else recompute from filtered detail. */
+  function cohortSlicesForCharts() {{
+    if (!anyDimensionFilter()) {{
+      return {{
+        aud: DATA.by_audience_cohort || [],
+        life: DATA.by_lifecycle_bucket || [],
+        enroll: DATA.by_enrollment_cohort || [],
+        lcs: DATA.by_lcs_cohort || [],
+      }};
+    }}
+    const filtered = filterProvRows();
+    return {{
+      aud: aggregateFromProvByField(filtered, "audience_cohort", null),
+      life: aggregateFromProvByField(filtered, "lifecycle_bucket", null),
+      enroll: aggregateFromProvByField(filtered, "enrollment_cohort", cohortLabel).slice(0, COHORT_TOP_ENROLL),
+      lcs: aggregateFromProvByField(filtered, "lcs_cohort", cohortLabel).slice(0, COHORT_TOP_LCS),
+    }};
   }}
 
   function reasonAggForCharts() {{
@@ -610,7 +865,8 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
   let chLifecycle = null;
   let chAudience = null;
   function renderCohortStatic() {{
-    const aud = DATA.by_audience_cohort || [];
+    const sl = cohortSlicesForCharts();
+    const aud = sl.aud;
     const labelsA = aud.map(r => String(r.audience_cohort || ""));
     const boltA = aud.map(r => Number(r.bolt_spend_local) || 0);
     const provA = aud.map(r => Number(r.provider_spend_local) || 0);
@@ -651,7 +907,7 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
           + "<td>" + fmtInt(r.providers) + "</td></tr>";
       }}).join("")) || "<tr><td colspan='7'>No rows</td></tr>";
 
-    const life = DATA.by_lifecycle_bucket || [];
+    const life = sl.life;
     const labels = life.map(r => String(r.lifecycle_bucket || ""));
     const bolt = life.map(r => Number(r.bolt_spend_local) || 0);
     const prov = life.map(r => Number(r.provider_spend_local) || 0);
@@ -697,10 +953,10 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
       spendTableBody(life, "lifecycle_bucket") || "<tr><td colspan='7'>No rows</td></tr>";
     document.getElementById("tblEnrollCohort").querySelector("thead").innerHTML = head.replace("Cohort", "Enrollment cohort");
     document.getElementById("tblEnrollCohort").querySelector("tbody").innerHTML =
-      spendTableBody(DATA.by_enrollment_cohort || [], "enrollment_cohort") || "<tr><td colspan='7'>No rows</td></tr>";
+      spendTableBody(sl.enroll, "enrollment_cohort") || "<tr><td colspan='7'>No rows</td></tr>";
     document.getElementById("tblLcs").querySelector("thead").innerHTML = head.replace("Cohort", "LCS cohort");
     document.getElementById("tblLcs").querySelector("tbody").innerHTML =
-      spendTableBody(DATA.by_lcs_cohort || [], "lcs_cohort") || "<tr><td colspan='7'>No rows</td></tr>";
+      spendTableBody(sl.lcs, "lcs_cohort") || "<tr><td colspan='7'>No rows</td></tr>";
   }}
 
   function filterEnrollRows() {{
@@ -751,6 +1007,7 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
     renderReasonTable(agg);
     renderProvTable(filtered);
     renderEnroll();
+    renderCohortStatic();
   }}
 
   document.querySelectorAll("#mainTabs .tab").forEach(btn => {{
@@ -762,7 +1019,8 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
     }});
   }});
 
-  ["dateFromIn","dateToIn","provSel","brandSel","audSel","lifeSel","lcsSel","enrCohortSel","reasonSel","amSel","segSel","objSel"].forEach(id => {{
+  // provSel/brandSel are hidden inputs driven by their comboboxes (which call refreshSpend themselves).
+  ["dateFromIn","dateToIn","audSel","lifeSel","lcsSel","enrCohortSel","reasonSel","amSel","segSel","objSel"].forEach(id => {{
     const el = document.getElementById(id);
     el.addEventListener("change", refreshSpend);
     if (id === "dateFromIn" || id === "dateToIn") el.addEventListener("input", refreshSpend);
@@ -783,8 +1041,38 @@ def _html_template(title: str, subtitle: str, data_json: str, build_banner: str,
     updateClear();
   }})();
 
+  document.getElementById("loadReportBtn").addEventListener("click", refreshSpend);
+
+  (function initViewToggle() {{
+    const vtP = document.getElementById("vtProvider");
+    const vtB = document.getElementById("vtBrand");
+    const gP  = document.getElementById("pfProviderGroup");
+    const gB  = document.getElementById("pfBrandGroup");
+    function setMode(mode) {{
+      const isProv = mode === "provider";
+      vtP.classList.toggle("active", isProv);
+      vtB.classList.toggle("active", !isProv);
+      vtP.setAttribute("aria-selected", isProv ? "true" : "false");
+      vtB.setAttribute("aria-selected", isProv ? "false" : "true");
+      gP.style.display = isProv ? "" : "none";
+      gB.style.display = isProv ? "none" : "";
+      // Reset the inactive dimension so filters don't stack unexpectedly.
+      if (isProv) {{
+        document.getElementById("brandSel").value = "all";
+        document.getElementById("brandComboInput").value = "";
+        document.getElementById("brandComboClear").style.display = "none";
+      }} else {{
+        document.getElementById("provSel").value = "all";
+        document.getElementById("providerComboInput").value = "";
+        document.getElementById("providerComboClear").style.display = "none";
+      }}
+      refreshSpend();
+    }}
+    vtP.addEventListener("click", () => setMode("provider"));
+    vtB.addEventListener("click", () => setMode("brand"));
+  }})();
+
   refreshSpend();
-  renderCohortStatic();
   </script>
 </body>
 </html>

@@ -1,0 +1,21 @@
+# Render Blueprint: live Smart Promotions (Streamlit → Databricks)
+# https://render.com/docs/blueprint-spec
+#
+# Deploy: Render Dashboard → New → Blueprint → connect this Git repo → apply.
+# Then: Service → Environment → add DATABRICKS_TOKEN (secret).
+#
+# If Databricks uses IP allowlisting, allow Render outbound IPs for your region
+# or use Boltable / a runner inside your network instead.
+
+services:
+  - type: web
+    name: smart-promotions-live
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: DATABRICKS_TOKEN
+        sync: false
