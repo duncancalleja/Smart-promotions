@@ -3,7 +3,7 @@
 This repo includes a GitHub Actions workflow (`.github/workflows/publish-pages.yml`) that:
 
 - runs **every Monday** (and on-demand),
-- builds `site/` (bad orders from Databricks; calculator + Smart Promotions ROI copied from `docs/`; hub),
+- builds `site/` (bad orders + Smart Promotions from Databricks; calculator + Smart Promotions ROI copied from `docs/`; hub),
 - deploys it to **GitHub Pages**.
 
 ## Safe-by-default behavior
@@ -53,9 +53,10 @@ After deploy, these paths exist on the Pages site (replace `<base>` with your re
 | Path | Content |
 |------|---------|
 | `<base>/` | Bad orders dashboard (Malta, `--year 2026`) |
+| `<base>/smart-promo.html` | Smart Promotions — **built in CI** from Databricks each run (weekly + manual); not stored as a large blob in git |
 | `<base>/smart-promo-roi.html` | Smart Promotions ROI — **static snapshot** committed as `docs/smart-promo-roi.html` (same idea as the calculator; refresh by rebuilding locally and committing) |
 | `<base>/campaign-cost-calculator.html` | Campaign cost calculator (static from `docs/`) |
-| `<base>/dashboards.html` | Short hub page linking to the three dashboards above |
+| `<base>/dashboards.html` | Short hub page linking to the dashboards above |
 
 **Refreshing the ROI file on Pages:** from the repo root, with Databricks available locally:
 
@@ -67,6 +68,29 @@ git add docs/smart-promo-roi.html && git commit -m "Refresh Smart Promotions ROI
 Then run the Pages workflow (or wait for the weekly schedule). The site URL for ROI stays the same; visitors get the new snapshot after deploy.
 
 If you want multiple countries, years, or ROI windows, use different filenames under `docs/` and extend the workflow `cp` lines.
+
+## Exclusivity targeting — weekly boltable (Mac-off backup)
+
+The workflow **`.github/workflows/exclusivity-weekly-boltable.yml`** rebuilds the Malta exclusivity dashboard from **live Databricks** and pushes to **https://mt-exclusivity-targeting.boltable.eu** every **Monday ~08:30 Malta** (also **Run workflow** on demand).
+
+This complements the Mac **LaunchAgent** (`scripts/install_exclusivity_weekly_launchagent.sh`) so data stays fresh when your laptop is off.
+
+### One-time setup
+
+1. **Commit** the exclusivity dashboard sources to this repo (builder, templates, deploy scripts, `config/mt_delivery_market_share.json`).
+2. **Repository secrets** (Settings → Secrets and variables → Actions):
+   - **`DATABRICKS_TOKEN`** — Databricks SQL PAT (`sql` scope)
+   - **`MT_PORTFOLIO_GH_TOKEN`** — fine-grained PAT with **`contents: write`** on **`boltable/mt-exclusivity-targeting`** (also enables **Save for team** in the dashboard)
+3. **Actions → “Exclusivity targeting — weekly boltable” → Run workflow** to verify.
+
+Manual CI run (same as the workflow):
+
+```bash
+export DATABRICKS_TOKEN=… MT_PORTFOLIO_GH_TOKEN=…
+bash scripts/exclusivity_ci_refresh.sh
+```
+
+GetPlace / brands-by-platform columns stay empty in CI until an export exists (commit snapshot under `boltable/mt-exclusivity-targeting/public/getplace-brands.json` or add `~/Documents/Bolt food/mt_brands_by_platform.json` locally before deploy). Databricks metrics refresh regardless.
 
 ## Troubleshooting
 

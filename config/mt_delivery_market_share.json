@@ -1,0 +1,7 @@
+{
+  "country": "MT",
+  "bolt_platform_share_pct": 42.4,
+  "wolt_platform_share_pct": 57.6,
+  "source": "GetPlace Sep 2025–Jan 2026 (Malta delivery platform split)",
+  "notes": "Used by CI and local builds. Override locally via ~/Documents/Bolt food/mt_delivery_market_share.json if needed."
+}

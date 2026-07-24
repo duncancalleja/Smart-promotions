@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Optional
 
 import pandas as pd
@@ -10,8 +10,14 @@ from databricks import sql
 DEFAULT_SERVER_HOSTNAME = "bolt-incentives.cloud.databricks.com"
 DEFAULT_HTTP_PATH = "sql/protocolv1/o/2472566184436351/0221-081903-9ag4bh69"
 
+_NO_TOKEN_MSG = (
+    "No Databricks token found. Set DATABRICKS_TOKEN or ~/.databricks_token "
+    "(PAT starting with dapi…). OAuth browser login is disabled by default — "
+    "pass allow_oauth=True to DBX() only when you explicitly want browser auth."
+)
 
-def _read_access_token() -> Optional[str]:
+
+def read_access_token() -> Optional[str]:
     token = os.environ.get("DATABRICKS_TOKEN")
     if token and token.strip():
         return token.strip()
@@ -25,13 +31,18 @@ def _read_access_token() -> Optional[str]:
     return None
 
 
+def has_access_token() -> bool:
+    return bool(read_access_token())
+
+
 @dataclass
 class DBX:
     server_hostname: str = DEFAULT_SERVER_HOSTNAME
     http_path: str = DEFAULT_HTTP_PATH
     access_token: Optional[str] = None
+    allow_oauth: bool = False
 
-    _conn: Any = None
+    _conn: Any = field(default=None, repr=False)
 
     def __enter__(self) -> "DBX":
         connect_args: dict[str, Any] = {
@@ -39,11 +50,13 @@ class DBX:
             "http_path": self.http_path,
         }
 
-        token = self.access_token or _read_access_token()
+        token = self.access_token or read_access_token()
         if token:
             connect_args["access_token"] = token
-        else:
+        elif self.allow_oauth:
             connect_args["auth_type"] = "databricks-oauth"
+        else:
+            raise RuntimeError(_NO_TOKEN_MSG)
 
         self._conn = sql.connect(**connect_args)
         return self
@@ -71,4 +84,3 @@ class DBX:
             rows = cur.fetchall()
 
         return pd.DataFrame(rows, columns=cols)
-
